@@ -19,8 +19,8 @@ strafespeedmultiplyer = 0.8
 mapgrid = ["##########",
            "#  #     #",
            "#        #",
-           "#  #     #",
-           "#       ##",
+           "#        #",
+           "#        #",
            "#        #",
            "#        #",
            "#        #",
@@ -62,63 +62,44 @@ class player(pygame.sprite.Sprite):
         self.gridx = self.rect.center[0] // 64
         self.gridy = self.rect.center[1] // 64
 
+        # - beggining of ray casting
         ray = 0
         while ray <= projplane[0]:
-            temprot = self.rot
-            if ray <= projplane[0] // 2:
-                if self.rot - 30 <= 0:
-                    temprot = self.rot + 360
-            else:
-                if self.rot + 30 > 360:
-                    temprot = self.rot - 360
-            temprot = temprot - 30 + (ray * rayang)
+            temprot = self.rot - 30 + ((ray - 1) * rayang)
+            
+            if temprot <= 0:
+                temprot += 360
+            elif temprot >= 360:
+                temprot -= 360
 
             # -- wall detection
             ##  - horizontal
             if 0 < temprot and temprot <= 90:
                 Ay = int(self.rect.center[1] / 64) * 64 - 1
-                #Yadir = -1
                 Ya = -cubesize
                 Xadir = 1
-                temprot -= 0
-                if temprot == 0: temprot += 1 / 10000
-                #-between 0 and 90 x is the opposite in the triangle, so y * tan of angle
-                Ax = self.rect.center[0] + (self.rect.center[1] - Ay) * math.tan(temprot * (math.pi / 180))
-                Xa = Xadir * ((self.rect.center[1] - Ay) * math.tan(temprot * (math.pi / 180)))
+                Xa = (Ya * math.tan(temprot * (math.pi / 180)))
             elif 90 < temprot and temprot <= 180:
                 Ay = int(self.rect.center[1] / 64) * 64 + 64
-                #Yadir = -1
                 Ya = cubesize
                 Xadir = -1
-                #temprot -= 90
-                if temprot == 0: temprot += 1 / 10000
-                #between 90 and 180 x is the adjecent in the triangle, so y /tan of angle
-                Ax = self.rect.center[0] + (self.rect.center[1] - Ay) / math.tan(temprot * (math.pi / 180))
-                Xa = Xadir * ((self.rect.center[1] - Ay) / math.tan(temprot * (math.pi / 180)))
+                Xa = (Ya / math.tan(temprot * (math.pi / 180)))
             elif 180 < temprot and temprot <= 270:
                 Ay = int(self.rect.center[1] / 64) * 64 + 64
-                #Yadir = 1
                 Ya = cubesize
                 Xadir = -1
-                temprot -= 180
-                if temprot == 0: temprot += 1 / 10000
-                #-between 180 and 270 x is the opposite in the triangle, so y * tan of angle
-                Ax = self.rect.center[0] + (self.rect.center[1] - Ay) * math.tan(temprot * (math.pi / 180))
-                Xa = Xadir * ((self.rect.center[1] - Ay) * math.tan(temprot * (math.pi / 180)))
+                Xa = (Ya * math.tan(temprot * (math.pi / 180)))
             elif 270 < temprot and temprot <= 360:
                 Ay = int(self.rect.center[1] / 64) * 64 - 1
-                #Yadir = 1
                 Ya = -cubesize
                 Xadir = 1
-                temprot -= 270   
-                if temprot == 0: temprot += 1 / 10000 
-                #between 270 and 360 x is the adjecent in the triangle, so y /tan of angle
-                Ax = self.rect.center[0] + (self.rect.center[1] - Ay) / math.tan(temprot * (math.pi / 180))
-                Xa = Xadir * ((self.rect.center[1] - Ay) / math.tan(temprot * (math.pi / 180)))            
+                Xa = (Ya / math.tan(temprot * (math.pi / 180)))
+
+            if temprot == 0: temprot += 1 / 10000
             
-            #Ax = self.rect.center[0] + (self.rect.center[1] - Ay) / math.tan(temprot * (math.pi / 180))
+            Ax = self.rect.center[0] + (self.rect.center[1] - Ay) / math.tan((temprot) * (math.pi / 180))
             
-            #Xa = Xadir * ((self.rect.center[1] - Ay) / math.tan(temprot * (math.pi / 180)))
+            #Xa = (abs(Ya) / math.tan(temprot * (math.pi / 180)))
 
             
 
